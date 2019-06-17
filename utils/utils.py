@@ -264,7 +264,6 @@ def plot_loss(loss,num_average=30,iterations_per_epoch=None):
         iterations = iterations / iterations_per_epoch
     
     plt.plot(iterations,loss,marker="",linewidth=2,color='blue',label='loss (raw)')
-    from mlslac.utils import moving_average 
     plt.plot(moving_average(iterations,num_average),moving_average(loss,num_average),
              marker="",linewidth=2,color='red',label='rolling mean')
     ax.set_xlabel('Iterations' if iterations_per_epoch is None else 'Epoch',fontsize=20)
