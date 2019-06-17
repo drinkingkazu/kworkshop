@@ -100,6 +100,29 @@ def plot_confusion_matrix(label,prediction,class_names):
     fig.tight_layout()
     plt.show()
 
+class ImagePadder(object):
+    
+    def __init__(self,padsize=20,randomize=False):
+        self._pads=padsize
+        self._randomize=randomize
+        
+    def __call__(self,img):
+        import numpy as np
+        img=np.array(img)
+        new_shape = list(img.shape)
+        new_shape[0] += self._pads
+        new_shape[1] += self._pads
+        
+        new_img = np.zeros(shape=new_shape,dtype=img.dtype)
+        pad_vertical   = int(self._pads / 2.)
+        pad_horizontal = int(self._pads / 2.)
+        if self._randomize:
+            pad_vertical   = int(np.random.uniform() * self._pads)
+            pad_horizontal = int(np.random.uniform() * self._pads)
+        
+        new_img[pad_vertical:pad_vertical+img.shape[0],pad_horizontal:pad_horizontal+img.shape[1]] = img
+        return new_img
+
 # Compute moving average
 def moving_average(a, n=3) :
     ret = np.cumsum(a, dtype=float)
