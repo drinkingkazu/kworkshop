@@ -35,7 +35,7 @@ class PhotonLibrary:
         if xid<0 or self._nx<=xid or yid<0 or self._ny<=yid or zid<0 or self._nz<=zid:
             return -1
 
-        return xid + yid * self._ny + zid * (self._nx * self._ny)
+        return xid + yid * self._nx + zid * (self._nx * self._ny)
 
 
     def GetVisibility(self, x, y, z, OpChannel):
