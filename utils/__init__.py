@@ -1,2 +1,2 @@
 from .utils import *
-from PhotonLibrary import PhotonLibrary
+from .PhotonLibrary import PhotonLibrary
