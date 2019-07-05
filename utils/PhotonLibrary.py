@@ -39,7 +39,11 @@ class PhotonLibrary:
 
 
     def GetVisibility(self, x, y, z, OpChannel):
-        return self._plib[OpChannel][GetVoxelID(x,y,z)]
+        return self._plib[OpChannel][self.GetVoxelID(x,y,z)]
+
+
+    def GetVisibility(self, VoxelID, OpChannel):
+        return self._plib[OpChannel][VoxelID]
 
     
     def XRange(self): return (self._xmin,self._xmax)
