@@ -41,6 +41,8 @@ class PhotonLibrary:
     def GetVisibility(self, x, y, z, OpChannel):
         return self._plib[OpChannel][self.GetVoxelID(x,y,z)]
 
+    def MaxVisibility(self):
+        return np.max(self._plib)
 
     def XRange(self): return (self._xmin,self._xmax)
 
@@ -50,26 +52,38 @@ class PhotonLibrary:
     
     def ZRange(self): return (self._zmin,self._zmax)
 
-    def VisibilityYZ(self, x_frac, ny, nz):
-        x  = self._xmin + x_frac * (self._xmax - self._xmin)
-        ys = self._ymin + np.arange(ny) * (self._ymax - self._ymin) / float(ny)
-        zs = self._zmin + np.arange(nz) * (self._zmax - self._zmin) / float(nz)
-        result = np.zeros(shape=[ny,nz],dtype=np.float64)
-        for iy in range(ny):
-            for iz in range(nz):
-                voxel_id = self.GetVoxelID(x,ys[iy],zs[iz])
+    def VisibilityXY(self, z_frac):
+        assert z_frac <= 1.0 and z_frac >= 0.0
+        iz = int(float(z_frac) * self._nz + 0.5)
+        result = np.zeros(shape=[self._nx,self._ny],dtype=np.float64)
+        for ix in range(self._nx):
+            for iy in range(self._ny):
+                voxel_id = ix + iy * self._nx + iz * (self._nx * self._ny)
+                for ch in range(len(self._plib)):
+                    result[ix][iy] += self._plib[ch][voxel_id]                
+        return result
+    
+    
+    def VisibilityYZ(self, x_frac):
+        assert x_frac <= 1.0 and x_frac >= 0.0
+        ix = int(float(x_frac) * self._nx + 0.5)
+        result = np.zeros(shape=[self._ny,self._nz],dtype=np.float64)
+        for iy in range(self._ny):
+            for iz in range(self._nz):
+                voxel_id = ix + iy * self._nx + iz * (self._nx * self._ny)
                 for ch in range(len(self._plib)):
                     result[iy][iz] += self._plib[ch][voxel_id]                
         return result
+            
     
-    def VisibilityXZ(self, y_frac, nx, nz):
-        y  = self._ymin + y_frac * (self._ymax - self._ymin)
-        xs = self._xmin + np.arange(nx) * (self._xmax - self._xmin) / float(nx)
-        zs = self._zmin + np.arange(nz) * (self._zmax - self._zmin) / float(nz)
-        result = np.zeros(shape=[nx,nz],dtype=np.float64)
-        for ix in range(nx):
-            for iz in range(nz):
-                voxel_id = self.GetVoxelID(xs[ix],y,zs[iz])
+    def VisibilityZX(self, y_frac):
+        assert y_frac <= 1.0 and y_frac >= 0.0
+        iy = int(float(y_frac) * self._ny + 0.5)
+        result = np.zeros(shape=[self._nz,self._nx],dtype=np.float64)
+        for iz in range(self._nz):
+            for ix in range(self._nx):
+                voxel_id = ix + iy * self._nx + iz * (self._nx * self._ny)
                 for ch in range(len(self._plib)):
-                    result[ix][iz] += self._plib[ch][voxel_id]                
+                    result[iz][ix] += self._plib[ch][voxel_id]                
         return result
+
